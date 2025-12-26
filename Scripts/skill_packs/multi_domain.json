@@ -1,0 +1,279 @@
+{
+    "programming": {
+        "python_basics": [
+            {
+                "term": "variables",
+                "difficulty": "easy",
+                "category": "fundamentals"
+            },
+            {
+                "term": "data_types",
+                "difficulty": "easy",
+                "category": "fundamentals"
+            },
+            {
+                "term": "conditionals",
+                "difficulty": "easy",
+                "category": "fundamentals"
+            },
+            {
+                "term": "for_loops",
+                "difficulty": "medium",
+                "category": "fundamentals"
+            },
+            {
+                "term": "while_loops",
+                "difficulty": "medium",
+                "category": "fundamentals"
+            },
+            {
+                "term": "functions",
+                "difficulty": "medium",
+                "category": "functions"
+            },
+            {
+                "term": "return_values",
+                "difficulty": "medium",
+                "category": "functions"
+            },
+            {
+                "term": "lambda",
+                "difficulty": "hard",
+                "category": "functions"
+            },
+            {
+                "term": "list_comprehension",
+                "difficulty": "hard",
+                "category": "data_structures"
+            },
+            {
+                "term": "decorators",
+                "difficulty": "hard",
+                "category": "advanced"
+            }
+        ],
+        "web_development": [
+            {
+                "term": "html_basics",
+                "difficulty": "easy",
+                "category": "frontend"
+            },
+            {
+                "term": "css_selectors",
+                "difficulty": "easy",
+                "category": "frontend"
+            },
+            {
+                "term": "flexbox",
+                "difficulty": "medium",
+                "category": "frontend"
+            },
+            {
+                "term": "javascript_dom",
+                "difficulty": "medium",
+                "category": "frontend"
+            },
+            {
+                "term": "async_await",
+                "difficulty": "hard",
+                "category": "javascript"
+            }
+        ]
+    },
+    "business_english": {
+        "meetings": [
+            {
+                "term": "touch_base",
+                "translation": "gặp gỡ nhanh",
+                "difficulty": "medium"
+            },
+            {
+                "term": "circle_back",
+                "translation": "quay lại vấn đề sau",
+                "difficulty": "medium"
+            },
+            {
+                "term": "ballpark_figure",
+                "translation": "con số ước lượng",
+                "difficulty": "medium"
+            },
+            {
+                "term": "on_the_same_page",
+                "translation": "cùng hiểu biết",
+                "difficulty": "easy"
+            },
+            {
+                "term": "think_outside_the_box",
+                "translation": "suy nghĩ sáng tạo",
+                "difficulty": "medium"
+            },
+            {
+                "term": "get_the_ball_rolling",
+                "translation": "bắt đầu công việc",
+                "difficulty": "easy"
+            },
+            {
+                "term": "win_win_situation",
+                "translation": "đôi bên cùng có lợi",
+                "difficulty": "easy"
+            },
+            {
+                "term": "hit_the_ground_running",
+                "translation": "bắt đầu ngay hiệu quả",
+                "difficulty": "hard"
+            },
+            {
+                "term": "low_hanging_fruit",
+                "translation": "mục tiêu dễ đạt",
+                "difficulty": "medium"
+            },
+            {
+                "term": "push_the_envelope",
+                "translation": "vượt qua giới hạn",
+                "difficulty": "hard"
+            }
+        ],
+        "finance": [
+            {
+                "term": "ROI",
+                "translation": "lợi nhuận đầu tư",
+                "difficulty": "medium"
+            },
+            {
+                "term": "cash_flow",
+                "translation": "dòng tiền",
+                "difficulty": "easy"
+            },
+            {
+                "term": "break_even_point",
+                "translation": "điểm hòa vốn",
+                "difficulty": "medium"
+            },
+            {
+                "term": "P&L",
+                "translation": "báo cáo lãi lỗ",
+                "difficulty": "hard"
+            },
+            {
+                "term": "leverage",
+                "translation": "tận dụng nguồn lực",
+                "difficulty": "hard"
+            }
+        ],
+        "negotiations": [
+            {
+                "term": "bring_to_the_table",
+                "translation": "đóng góp",
+                "difficulty": "medium"
+            },
+            {
+                "term": "iron_out",
+                "translation": "giải quyết vấn đề",
+                "difficulty": "medium"
+            },
+            {
+                "term": "fast_track",
+                "translation": "đẩy nhanh tiến độ",
+                "difficulty": "medium"
+            },
+            {
+                "term": "stakeholder",
+                "translation": "bên liên quan",
+                "difficulty": "medium"
+            },
+            {
+                "term": "deliverable",
+                "translation": "sản phẩm giao",
+                "difficulty": "hard"
+            }
+        ]
+    },
+    "api_documentation": {
+        "rest_basics": [
+            {
+                "term": "endpoint",
+                "definition": "URL to access API resource",
+                "difficulty": "easy"
+            },
+            {
+                "term": "GET_request",
+                "definition": "Retrieve data from server",
+                "difficulty": "easy"
+            },
+            {
+                "term": "POST_request",
+                "definition": "Create new resource",
+                "difficulty": "easy"
+            },
+            {
+                "term": "PUT_request",
+                "definition": "Update entire resource",
+                "difficulty": "medium"
+            },
+            {
+                "term": "PATCH_request",
+                "definition": "Partial update",
+                "difficulty": "medium"
+            },
+            {
+                "term": "DELETE_request",
+                "definition": "Remove resource",
+                "difficulty": "easy"
+            }
+        ],
+        "authentication": [
+            {
+                "term": "API_key",
+                "definition": "Unique identifier for client",
+                "difficulty": "easy"
+            },
+            {
+                "term": "Bearer_token",
+                "definition": "Token-based auth",
+                "difficulty": "medium"
+            },
+            {
+                "term": "OAuth_2",
+                "definition": "Authorization protocol",
+                "difficulty": "hard"
+            },
+            {
+                "term": "JWT",
+                "definition": "JSON Web Token",
+                "difficulty": "hard"
+            },
+            {
+                "term": "Basic_auth",
+                "definition": "Username + password",
+                "difficulty": "easy"
+            }
+        ],
+        "concepts": [
+            {
+                "term": "rate_limiting",
+                "definition": "Restrict requests/time",
+                "difficulty": "medium"
+            },
+            {
+                "term": "HTTP_status_codes",
+                "definition": "Response codes (200, 404...)",
+                "difficulty": "easy"
+            },
+            {
+                "term": "CORS",
+                "definition": "Cross-Origin Resource Sharing",
+                "difficulty": "hard"
+            },
+            {
+                "term": "pagination",
+                "definition": "Divide results into pages",
+                "difficulty": "medium"
+            },
+            {
+                "term": "webhooks",
+                "definition": "Event-driven callbacks",
+                "difficulty": "hard"
+            }
+        ]
+    }
+}

@@ -3,10 +3,46 @@
 Shows due reviews with FSRS v5 scheduling
 """
 import argparse
+import sqlite3
+from pathlib import Path
 from datetime import datetime
 from spaced_repetition import SpacedRepetitionManager, Rating
 from emotional_detector import EmotionalDetector
 from performance_guard import sync_guard
+
+DB_PATH = Path(__file__).parent.parent / '.ai_coach' / 'progress.db'
+
+
+def get_market_intel(skill_name: str):
+    """Get market intelligence for a skill"""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    
+    cursor.execute("""
+        SELECT m.job_count, m.salary_avg, s.market_value
+        FROM market_data m
+        LEFT JOIN skills s ON s.name = m.skill_name
+        WHERE m.skill_name = ?
+        ORDER BY m.date DESC
+        LIMIT 1
+    """, (skill_name,))
+    
+    row = cursor.fetchone()
+    conn.close()
+    
+    if row:
+        job_count, salary_avg, market_value = row
+        # Calculate ROI (simplified)
+        learning_time = 30  # hours
+        roi = (market_value or 0) / learning_time if market_value else 0
+        
+        return {
+            'job_count': job_count or 0,
+            'salary_avg': salary_avg or 0,
+            'roi': roi
+        }
+    
+    return None
 
 def show_due_reviews():
     """Show all due reviews"""
@@ -25,10 +61,16 @@ def show_due_reviews():
         stability = review['stability']
         difficulty = review['difficulty']
         mastery = review.get('mastery_prob', 0)
+        market = get_market_intel(skill_name)
         
         print(f"{i}. {skill_name}")
         print(f"   📊 Mastery: {mastery:.0%} | Difficulty: {difficulty:.1f}/10")
         print(f"   ⏱️  Stability: {stability:.1f} days")
+        
+        if market:
+            print(f"   💰 Market: {market['job_count']} jobs/month, {market['salary_avg']/1e6:.0f}M VND avg")
+            print(f"   🎯 ROI: {market['roi']/1e6:.1f}M VND per hour learned")
+        
         print()
 
 def review_skill_interactive(skill_name: str):
@@ -90,9 +132,16 @@ def review_session():
         skill_name = review['skill_name']
         
         # Show skill info
+        market = get_market_intel(skill_name)
+        
         print(f"\n{'='*50}")
         print(f"Skill: {skill_name}")
         print(f"Current mastery: {review.get('mastery_prob', 0):.0%}")
+        
+        if market:
+            print(f"💰 Market value: {market['job_count']} jobs, {market['salary_avg']/1e6:.0f}M VND")
+            print(f"🎯 Learning ROI: {market['roi']/1e6:.1f}M VND/hour")
+        
         print('='*50)
         
         success = review_skill_interactive(skill_name)

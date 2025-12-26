@@ -1,0 +1,153 @@
+{
+    "high_value_skills": {
+        "system_design": [
+            {
+                "concept": "Rate Limiting Strategies",
+                "roi_score": 150000,
+                "market_value": 25000,
+                "time_hours": 20
+            },
+            {
+                "concept": "Microservices Communication Patterns",
+                "roi_score": 180000,
+                "market_value": 30000,
+                "time_hours": 30
+            },
+            {
+                "concept": "Database Sharding",
+                "roi_score": 120000,
+                "market_value": 20000,
+                "time_hours": 25
+            },
+            {
+                "concept": "Caching Strategies (Redis, CDN)",
+                "roi_score": 140000,
+                "market_value": 22000,
+                "time_hours": 15
+            },
+            {
+                "concept": "Load Balancing Algorithms",
+                "roi_score": 100000,
+                "market_value": 18000,
+                "time_hours": 12
+            }
+        ],
+        "persuasion_psychology": [
+            {
+                "concept": "Anchoring Bias in Negotiation",
+                "roi_score": 200000,
+                "market_value": 10000,
+                "time_hours": 2,
+                "use_case": "Salary negotiation"
+            },
+            {
+                "concept": "Reciprocity Principle",
+                "roi_score": 180000,
+                "market_value": 8000,
+                "time_hours": 2,
+                "use_case": "Client relationships"
+            },
+            {
+                "concept": "Social Proof in Sales",
+                "roi_score": 150000,
+                "market_value": 15000,
+                "time_hours": 3,
+                "use_case": "Close deals"
+            },
+            {
+                "concept": "Scarcity Tactics",
+                "roi_score": 120000,
+                "market_value": 6000,
+                "time_hours": 1,
+                "use_case": "Create urgency"
+            },
+            {
+                "concept": "Authority Building",
+                "roi_score": 140000,
+                "market_value": 12000,
+                "time_hours": 5,
+                "use_case": "Personal branding"
+            }
+        ],
+        "financial_analysis": [
+            {
+                "concept": "DCF Valuation",
+                "roi_score": 160000,
+                "market_value": 20000,
+                "time_hours": 10,
+                "use_case": "Investment decisions"
+            },
+            {
+                "concept": "P&L Statement Analysis",
+                "roi_score": 140000,
+                "market_value": 15000,
+                "time_hours": 8,
+                "use_case": "Business health"
+            },
+            {
+                "concept": "ROI Calculation Methods",
+                "roi_score": 180000,
+                "market_value": 12000,
+                "time_hours": 3,
+                "use_case": "Project prioritization"
+            },
+            {
+                "concept": "Break-even Analysis",
+                "roi_score": 120000,
+                "market_value": 10000,
+                "time_hours": 5,
+                "use_case": "Startup planning"
+            },
+            {
+                "concept": "Compound Interest & Time Value",
+                "roi_score": 200000,
+                "market_value": 8000,
+                "time_hours": 2,
+                "use_case": "Wealth building"
+            }
+        ],
+        "negotiation_tactics": [
+            {
+                "concept": "BATNA (Best Alternative)",
+                "roi_score": 250000,
+                "market_value": 15000,
+                "time_hours": 3,
+                "use_case": "Salary, contracts"
+            },
+            {
+                "concept": "Silence as Leverage",
+                "roi_score": 180000,
+                "market_value": 8000,
+                "time_hours": 1,
+                "use_case": "Price negotiation"
+            },
+            {
+                "concept": "Mirroring Technique",
+                "roi_score": 140000,
+                "market_value": 6000,
+                "time_hours": 2,
+                "use_case": "Build rapport"
+            },
+            {
+                "concept": "Labeling Emotions",
+                "roi_score": 120000,
+                "market_value": 5000,
+                "time_hours": 2,
+                "use_case": "Diffuse tension"
+            },
+            {
+                "concept": "Calibrated Questions",
+                "roi_score": 160000,
+                "market_value": 10000,
+                "time_hours": 3,
+                "use_case": "Gain information"
+            }
+        ]
+    },
+    "metadata": {
+        "roi_calculation": "(market_value_per_year * usage_frequency) / time_to_master_hours",
+        "tier_1_threshold": 100000,
+        "tier_2_threshold": 50000,
+        "focus_recommendation": "80% time on skills with ROI > 100k"
+    }
+}
