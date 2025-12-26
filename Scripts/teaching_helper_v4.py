@@ -1,6 +1,6 @@
 """
-Enhanced teaching_helper with v4.0 features integration
-Integrates: Event system, FSRS, Emotional detection
+Enhanced teaching_helper with v4.7 features integration
+Integrates: Event system, FSRS, Emotional detection, Auto Prediction
 """
 import argparse
 import json
@@ -13,6 +13,9 @@ from spaced_repetition import SpacedRepetitionManager
 from emotional_detector import EmotionalDetector
 from performance_guard import sync_guard, async_guard
 
+# v4.7 imports
+from scaffolding_system import ScaffoldingSystem, ScaffoldingContext
+
 # Legacy imports
 import sqlite3
 
@@ -22,16 +25,18 @@ VAULT_PATH = Path(__file__).parent.parent
 
 class TeachingSession:
     """
-    Enhanced teaching session with v4.0 features
+    Enhanced teaching session with v4.7 features
     
     Tracks:
     - Session duration
     - Errors and accuracy
     - Emotional state
     - Reviews completed
+    - Prediction feedback loop (v4.7)
     """
     
-    def __init__(self):
+    def __init__(self, skill_name: str = None):
+        self.skill_name = skill_name
         self.start_time = datetime.now()
         self.errors = 0
         self.correct_answers = 0
@@ -43,6 +48,12 @@ class TeachingSession:
         self.emotional_detector = EmotionalDetector()
         self.spaced_rep_manager = SpacedRepetitionManager()
         
+        # v4.7 integrations
+        self.scaffolding_system = ScaffoldingSystem()
+        self.prediction_context = None
+        self.prediction_id = None  # Track prediction for feedback loop
+        self.mastery_before = None
+        
         # Emit session start
         self.event_bus.publish(EventType.SESSION_START, {
             'user_id': 1,
@@ -50,7 +61,7 @@ class TeachingSession:
         })
     
     def record_attempt(self, skill_name: str, correct: bool, response_time_sec: float = None):
-        """Record a practice attempt"""
+        """Record a practice attempt (v4.7: persists to DB)"""
         self.total_attempts += 1
         
         if correct:
@@ -60,6 +71,22 @@ class TeachingSession:
         
         if response_time_sec:
             self.response_times.append(response_time_sec)
+            
+            # v4.7: Persist to DB for prediction accuracy
+            self._save_response_time(skill_name, response_time_sec, correct)
+    
+    def _save_response_time(self, skill_name: str, response_time_sec: float, correct: bool):
+        """Save response time to DB for future predictions"""
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            INSERT INTO response_times (skill_name, response_time_sec, correct)
+            VALUES (?, ?, ?)
+        """, (skill_name, response_time_sec, 1 if correct else 0))
+        
+        conn.commit()
+        conn.close()
     
     @sync_guard
     def get_activity_summary(self) -> dict:
@@ -97,8 +124,15 @@ class TeachingSession:
         return emotion, should_intervene, meta.get('message', '')
     
     def end_session(self):
-        """End session and emit event"""
+        """End session and emit event (v4.7: auto-record teaching outcome)"""
         duration = (datetime.now() - self.start_time).total_seconds() / 60
+        
+        # v4.7: Auto-record teaching outcome for feedback loop
+        if self.prediction_id and self.skill_name:
+            try:
+                self.record_teaching_outcome()
+            except Exception as e:
+                print(f"⚠️  Failed to record teaching outcome: {e}")
         
         self.event_bus.publish(EventType.SESSION_END, {
             'user_id': 1,
@@ -107,6 +141,143 @@ class TeachingSession:
             'correct': self.correct_answers,
             'accuracy': self.correct_answers / self.total_attempts if self.total_attempts > 0 else 0
         })
+    
+    # v4.7: Prediction Integration Methods
+    
+    def predict_for_skill(self, skill_name: str) -> ScaffoldingContext:
+        """
+        Generate prediction and scaffolding context for skill
+        
+        Args:
+            skill_name: Skill to teach
+            
+        Returns:
+            ScaffoldingContext with teaching guidance (fallback to normal on error)
+        """
+        self.skill_name = skill_name
+        
+        try:
+            # Get current mastery for feedback loop
+            self.mastery_before = self._get_current_mastery(skill_name)
+            
+            # Generate prediction
+            self.prediction_context = self.scaffolding_system.get_scaffolding_context(skill_name)
+            
+            # Save prediction to DB for feedback loop
+            self.prediction_id = self._save_prediction(skill_name, self.prediction_context)
+            
+            return self.prediction_context
+        
+        except Exception as e:
+            # Graceful fallback to normal teaching on prediction error
+            print(f"⚠️  Prediction failed: {e}")
+            print(f"   Falling back to normal teaching mode")
+            
+            # Return safe default context
+            fallback_context = ScaffoldingContext(
+                teaching_mode='normal',
+                struggle_probability=0.5,
+                confidence=0.0,
+                recommended_style='hands_on',
+                socratic_strategy='Ask Socratic questions with minimal hints'
+            )
+            
+            self.prediction_context = fallback_context
+            return fallback_context
+    
+    def record_teaching_outcome(self):
+        """
+        Record actual teaching outcome for feedback loop
+        Should be called AFTER teaching session completes
+        
+        v4.7.3: Uses gradient struggle detection (severe/mild/none)
+        """
+        if not self.prediction_id or not self.skill_name:
+            return  # No prediction to verify
+        
+        # Get mastery after teaching
+        mastery_after = self._get_current_mastery(self.skill_name)
+        
+        # IMPROVED: Use gradient instead of binary threshold
+        mastery_improvement = mastery_after - self.mastery_before
+        
+        if mastery_improvement < 0.05:
+            actual_struggled = 2  # Severe struggle (almost no improvement)
+        elif mastery_improvement < 0.15:
+            actual_struggled = 1  # Mild struggle (some improvement)
+        else:
+            actual_struggled = 0  # No struggle (good improvement)
+        
+        # Check if prediction was correct
+        # Predicted scaffold if struggle (1 or 2), normal if no struggle (0)
+        predicted_struggle = 1 if self.prediction_context.teaching_mode == 'scaffold' else 0
+        
+        # Correct if:
+        # - Predicted scaffold AND actually struggled (1 or 2)
+        # - Predicted normal AND didn't struggle (0)
+        if predicted_struggle == 1:
+            prediction_correct = 1 if actual_struggled >= 1 else 0
+        else:
+            prediction_correct = 1 if actual_struggled == 0 else 0
+        
+        # Update DB
+        conn = sqlite3.connect(DB_PATH)
+        try:
+            cursor = conn.cursor()
+            
+            duration_min = (datetime.now() - self.start_time).total_seconds() / 60
+            
+            cursor.execute("""
+                UPDATE prediction_tracking
+                SET actual_struggled = ?,
+                    mastery_before = ?,
+                    mastery_after = ?,
+                    session_duration_min = ?,
+                    prediction_correct = ?
+                WHERE id = ?
+            """, (actual_struggled, self.mastery_before, mastery_after, 
+                  duration_min, prediction_correct, self.prediction_id))
+            
+            conn.commit()
+        finally:
+            conn.close()
+    
+    def _get_current_mastery(self, skill_name: str) -> float:
+        """Get current mastery probability for skill"""
+        conn = sqlite3.connect(DB_PATH)
+        try:
+            cursor = conn.cursor()
+            
+            cursor.execute("""
+                SELECT mastery_prob FROM skill_mastery WHERE skill_name = ?
+            """, (skill_name,))
+            
+            row = cursor.fetchone()
+            return row[0] if row else 0.0
+        finally:
+            conn.close()
+    
+    def _save_prediction(self, skill_name: str, context: ScaffoldingContext) -> int:
+        """Save prediction to DB, return prediction ID"""
+        conn = sqlite3.connect(DB_PATH)
+        try:
+            cursor = conn.cursor()
+            
+            cursor.execute("""
+                INSERT INTO prediction_tracking (
+                    skill_name, prediction_timestamp,
+                    struggle_probability, confidence, predicted_action,
+                    mastery_before
+                ) VALUES (?, ?, ?, ?, ?, ?)
+            """, (skill_name, datetime.now().isoformat(),
+                  context.struggle_probability, context.confidence,
+                  context.teaching_mode, self.mastery_before))
+            
+            prediction_id = cursor.lastrowid
+            conn.commit()
+            return prediction_id
+        finally:
+            conn.close()
 
 
 @async_guard

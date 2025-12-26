@@ -18,6 +18,21 @@ from performance_guard import sync_guard
 
 DB_PATH = Path(__file__).parent.parent / '.ai_coach' / 'progress.db'
 
+# Prediction constants (extracted from magic numbers)
+MAX_ERRORS_BASELINE = 5.0  # Baseline for "many errors"
+MAX_TIME_BASELINE = 300.0  # 5 minutes baseline for slow response
+GOOD_VELOCITY = 3.0  # topics/week considered good pace
+
+# Weight distribution for evidence factors
+ERROR_WEIGHT = 0.5  # 50% weight on error count
+TIME_WEIGHT = 0.3   # 30% weight on response time
+VELOCITY_WEIGHT = 0.2  # 20% weight on learning velocity
+
+# Confidence thresholds
+MIN_DATA_POINTS = 5  # Minimum samples for reliable prediction
+COLD_START_CONFIDENCE = 0.3  # Confidence cap during cold start
+MIN_CONFIDENCE_FOR_SCAFFOLD = 0.5  # Minimum confidence to scaffold
+
 
 @dataclass
 class PredictionInput:
@@ -60,25 +75,38 @@ class StatisticalPredictor:
             
         Returns:
             PredictionOutput with struggle prob, confidence, action
+            
+        Raises:
+            ValueError: If input data is invalid
         """
+        
+        # Input validation
+        if input_data.error_count_by_concept < 0:
+            raise ValueError(f"Error count cannot be negative: {input_data.error_count_by_concept}")
+        if not (1 <= input_data.prior_difficulty <= 10):
+            raise ValueError(f"Difficulty must be 1-10, got: {input_data.prior_difficulty}")
+        if input_data.time_to_first_correct < 0:
+            raise ValueError(f"Time cannot be negative: {input_data.time_to_first_correct}")
+        if input_data.learning_velocity < 0:
+            raise ValueError(f"Velocity cannot be negative: {input_data.learning_velocity}")
         
         # 1. Prior from skill difficulty (normalized 0-1)
         prior = input_data.prior_difficulty / 10.0
         
         # 2. Evidence from user performance
         # High errors → high struggle likelihood
-        error_factor = min(input_data.error_count_by_concept / 5.0, 1.0)
+        error_factor = min(input_data.error_count_by_concept / MAX_ERRORS_BASELINE, 1.0)
         
         # Slow time → high struggle likelihood
-        time_factor = min(input_data.time_to_first_correct / 300.0, 1.0)  # 5 min baseline
+        time_factor = min(input_data.time_to_first_correct / MAX_TIME_BASELINE, 1.0)
         
         # Low velocity → high struggle likelihood  
-        velocity_factor = max(0, 1.0 - input_data.learning_velocity / 3.0)  # 3 topics/week = good
+        velocity_factor = max(0, 1.0 - input_data.learning_velocity / GOOD_VELOCITY)
         
-        # Combine evidence (weighted average)
-        evidence_score = (error_factor * 0.5 + 
-                         time_factor * 0.3 + 
-                         velocity_factor * 0.2)
+        # Combine evidence (weighted average using constants)
+        evidence_score = (error_factor * ERROR_WEIGHT + 
+                         time_factor * TIME_WEIGHT + 
+                         velocity_factor * VELOCITY_WEIGHT)
         
         # 3. Bayesian update (simplified)
         # Posterior ∝ Likelihood × Prior
@@ -86,12 +114,22 @@ class StatisticalPredictor:
         posterior = (likelihood * prior) / ((likelihood * prior) + ((1 - likelihood) * (1 - prior)))
         
         # 4. Confidence based on data quality
-        # More data → higher confidence
+        # COLD START HANDLING: Require minimum data points for reliable prediction
         data_points = min(input_data.error_count_by_concept, 10)
         confidence = data_points / 10.0
         
+        # If insufficient data (cold start), lower confidence and use conservative approach
+        if data_points < MIN_DATA_POINTS:
+            confidence = max(confidence, COLD_START_CONFIDENCE)
+            # Conservative: Fallback to prior-only (just skill difficulty)
+            posterior = prior
+        
         # 5. Action decision
-        action = 'scaffold' if posterior > self.struggle_threshold else 'normal'
+        # Only scaffold if BOTH high struggle prob AND sufficient confidence
+        if posterior > self.struggle_threshold and confidence >= MIN_CONFIDENCE_FOR_SCAFFOLD:
+            action = 'scaffold'
+        else:
+            action = 'normal'
         
         return PredictionOutput(
             struggle_probability=round(posterior, 3),
