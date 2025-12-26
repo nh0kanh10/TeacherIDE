@@ -1,0 +1,26 @@
+{
+    "basic_info": {
+        "name": "Nguyên"
+    },
+    "learning_style": {
+        "primary_style": "project-based",
+        "explanation_preference": "example-first"
+    },
+    "goals": {
+        "primary_goal": "Lập trình ứng dụng (Cao đẳng)",
+        "motivation": "Chuẩn bị cho chuyên ngành cao đẳng"
+    },
+    "strengths": [
+        {
+            "area": "C# Basics",
+            "evidence": "Đã biết C# cơ bản"
+        },
+        {
+            "area": "Database (ADO.NET)",
+            "evidence": "Đã biết ADO.NET cơ bản"
+        }
+    ],
+    "personality_traits": {
+        "motivation_level": "medium"
+    }
+}

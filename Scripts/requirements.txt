@@ -1,0 +1,57 @@
+# AI Learning Coach - Python Dependencies
+
+# Google Gemini API
+google-generativeai>=0.8.0
+
+# Vector Database (using older version with pre-built wheels for Python 3.14)
+chromadb>=0.5.0,<1.0.0
+overrides>=7.7.0
+importlib-resources>=6.4.0
+
+# Environment variables
+python-dotenv>=1.0.0
+python-dotejinja2>=3.1.2
+click>=8.1.0
+packaging>=23.0
+toml>=0.10.2
+tzlocal>=5.0
+blinker>=1.6.0
+cachetools>=5.3.0
+gitpython>=3.1.0
+pyarrow>=15.0.0
+pydeck>=0.8.1
+
+# Vault watcher (v2 feature)
+watchdog>=3.0.0
+
+# v3.0 Cognitive Teaching System
+pyBKT>=1.4.0           # Bayesian Knowledge Tracing
+requests>=2.31.0       # ConceptNet API, Stack Overflow data
+radon>=6.0.1           # Cyclomatic complexity for ROI
+networkx>=3.0          # Skill dependency graph
+
+# CLI formatting
+rich>=13.7.0
+prompt-toolkit>=3.0.43
+
+# Database
+sqlalchemy>=2.0.25
+
+# File watching (for auto-sync)
+# The existing watchdog>=4.0.0 is for auto-sync, the new watchdog>=3.0.0 is for 'Vault watcher (v2 feature)'.
+# Keeping both as they serve different purposes based on comments.
+watchdog>=4.0.0
+
+# Markdown processing
+markdown>=3.5.2
+
+# Date/time utilities
+python-dateutil>=2.8.2
+
+# JSON schema validation
+jsonschema>=4.21.1
+
+# Web UI
+streamlit>=1.32.0
+plotly>=5.19.0
+streamlit-chat>=0.1.1

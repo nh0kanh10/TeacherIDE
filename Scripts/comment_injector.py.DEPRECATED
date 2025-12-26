@@ -1,0 +1,238 @@
+"""
+Comment Injector - Safe Inline Teaching with Undo
+Injects AI lessons as comments with backup and rollback support
+"""
+from pathlib import Path
+import shutil
+from datetime import datetime
+import sqlite3
+
+DB_PATH = Path(__file__).parent.parent / '.ai_coach' / 'progress.db'
+MARKER_START = 'AI-COACH-START'
+MARKER_END = 'AI-COACH-END'
+
+COMMENT_STYLES = {
+    'python': '#',
+    'csharp': '//',
+    'javascript': '//',
+    'typescript': '//',
+    'java': '//',
+    'cpp': '//',
+    'c': '//'
+}
+
+def get_language_from_file(file_path: Path) -> str:
+    """Detect language from file extension"""
+    ext_map = {
+        '.py': 'python',
+        '.cs': 'csharp',
+        '.js': 'javascript',
+        '.ts': 'typescript',
+        '.java': 'java',
+        '.cpp': 'cpp',
+        '.c': 'c'
+    }
+    return ext_map.get(file_path.suffix,  'python')
+
+def backup_file(fp: Path) -> Path:
+    """Create timestamped backup"""
+    backup_dir = Path(__file__).parent.parent / '.ai_coach' / 'backups'
+    backup_dir.mkdir(parents=True, exist_ok=True)
+    
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    backup_path = backup_dir / f"{fp.name}.{timestamp}.bak"
+    shutil.copy(fp, backup_path)
+    return backup_path
+
+def already_injected(lines, marker_start):
+    """Check if AI comments already exist"""
+    return any(marker_start in line for line in lines)
+
+def inject_lesson_comment(
+    file_path: str,
+    line_number: int,
+    lesson: str,
+    language: str = None,
+    dry_run: bool = False
+):
+    """
+    Inject AI lesson as comment above specified line
+    
+    Args:
+        file_path: Path to source file
+        line_number: Line number to inject above (1-indexed)
+        lesson: Lesson text to inject
+        language: Override language detection
+        dry_run: If True, only show preview without modifying file
+    
+    Returns:
+        dict with status, backup path, preview
+    """
+    fp = Path(file_path)
+    if not fp.exists():
+        raise FileNotFoundError(f"File not found: {file_path}")
+    
+    # Detect language if not provided
+    if not language:
+        language = get_language_from_file(fp)
+    
+    comment_prefix = COMMENT_STYLES.get(language, '#')
+    marker_start = f"{comment_prefix} {MARKER_START}"
+    marker_end = f"{comment_prefix} {MARKER_END}"
+    
+    # Read file
+    text = fp.read_text(encoding='utf-8')
+    lines = text.splitlines()
+    
+    # Check if already injected
+    if already_injected(lines, MARKER_START):
+        return {
+            'status': 'skipped',
+            'reason': 'AI comments already exist in file. Use /undo first.'
+        }
+    
+    # Prepare comment block
+    comment_lines = [
+        marker_start,
+        f"{comment_prefix} AI-Coach: {lesson}",
+        f"{comment_prefix} Learned: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+        marker_end
+    ]
+    
+    # Calculate insertion point
+    insert_index = max(0, line_number - 1)
+    
+    # Preview mode
+    if dry_run:
+        preview_lines = (
+            lines[max(0, insert_index-2):insert_index] +
+            [''] +
+            comment_lines +
+            [''] +
+            lines[insert_index:min(len(lines), insert_index+5)]
+        )
+        return {
+            'status': 'preview',
+            'preview': '\n'.join(preview_lines),
+            'would_insert_at': insert_index + 1
+        }
+    
+    # Backup original file
+    backup_path = backup_file(fp)
+    
+    # Insert comment block
+    lines.insert(insert_index, '\n'.join(comment_lines))
+    
+    # Write back
+    fp.write_text('\n'.join(lines), encoding='utf-8')
+    
+    # Record injection in database for undo
+    conn = sqlite3.connect(str(DB_PATH), timeout=30)
+    cur = conn.cursor()
+    cur.execute("""
+        INSERT INTO injections (file_path, marker, start_line, end_line, backup_path)
+        VALUES (?, ?, ?, ?, ?)
+    """, (
+        str(fp),
+        marker_start,
+        insert_index + 1,
+        insert_index + len(comment_lines),
+        str(backup_path)
+    ))
+    injection_id = cur.lastrowid
+    conn.commit()
+    conn.close()
+    
+    return {
+        'status': 'ok',
+        'backup': str(backup_path),
+        'injection_id': injection_id,
+        'lines_inserted': len(comment_lines)
+    }
+
+def undo_last_injection(file_path: str):
+    """
+    Restore file from last injection backup
+    
+    Returns:
+        bool: True if undo successful, False if no injection found
+    """
+    conn = sqlite3.connect(str(DB_PATH), timeout=30)
+    cur = conn.cursor()
+    
+    # Get most recent injection for this file
+    cur.execute("""
+        SELECT id, backup_path FROM injections
+        WHERE file_path = ?
+        ORDER BY created_at DESC
+        LIMIT 1
+    """, (file_path,))
+    
+    row = cur.fetchone()
+    if not row:
+        conn.close()
+        return False
+    
+    injection_id, backup_path = row
+    
+    # Restore from backup
+    shutil.copy(backup_path, file_path)
+    
+    # Mark as undone (delete record)
+    cur.execute("DELETE FROM injections WHERE id = ?", (injection_id,))
+    conn.commit()
+    conn.close()
+    
+    return True
+
+def main():
+    """CLI interface for comment injection"""
+    import argparse
+    
+    parser = argparse.ArgumentParser(description='Inject AI lessons as code comments')
+    parser.add_argument('file', help='Source file path')
+    parser.add_argument('line', type=int, help='Line number to inject above')
+    parser.add_argument('lesson', help='Lesson text')
+    parser.add_argument('--language', help='Override language detection')
+    parser.add_argument('--dry-run', action='store_true', help='Preview without modifying')
+    parser.add_argument('--undo', action='store_true', help='Undo last injection')
+    
+    args = parser.parse_args()
+    
+    if args.undo:
+        success = undo_last_injection(args.file)
+        if success:
+            print(f"✅ Undone: Restored {args.file} from backup")
+        else:
+            print(f"❌ No injection found for {args.file}")
+        return 0 if success else 1
+    
+    result = inject_lesson_comment(
+        args.file,
+        args.line,
+        args.lesson,
+        args.language,
+        args.dry_run
+    )
+    
+    if result['status'] == 'preview':
+        print("📋 Preview (--dry-run mode):")
+        print("=" * 50)
+        print(result['preview'])
+        print("=" * 50)
+        print(f"Would insert at line {result['would_insert_at']}")
+    
+    elif result['status'] == 'ok':
+        print(f"✅ Injected comment at {args.file}:{args.line}")
+        print(f"📁 Backup: {result['backup']}")
+        print(f"↩️  To undo: python Scripts/comment_injector.py {args.file} 0 '' --undo")
+    
+    elif result['status'] == 'skipped':
+        print(f"⚠️  {result['reason']}")
+        return 1
+    
+    return 0
+
+if __name__ == "__main__":
+    import sys
+    sys.exit(main())

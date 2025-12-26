@@ -1,0 +1,618 @@
+{
+    "metadata": {
+        "version": "1.0",
+        "description": "Comprehensive skill dependency graphs for Python, JavaScript, and C#",
+        "last_updated": "2025-12-26"
+    },
+    "python": {
+        "fundamentals": {
+            "variables": {
+                "prereqs": [],
+                "complexity": 1
+            },
+            "data_types": {
+                "prereqs": [
+                    "variables"
+                ],
+                "complexity": 2
+            },
+            "conditionals": {
+                "prereqs": [
+                    "variables",
+                    "data_types"
+                ],
+                "complexity": 2
+            },
+            "for_loops": {
+                "prereqs": [
+                    "conditionals"
+                ],
+                "complexity": 3
+            },
+            "while_loops": {
+                "prereqs": [
+                    "conditionals"
+                ],
+                "complexity": 3
+            },
+            "functions": {
+                "prereqs": [
+                    "conditionals",
+                    "for_loops"
+                ],
+                "complexity": 4
+            },
+            "scope": {
+                "prereqs": [
+                    "functions"
+                ],
+                "complexity": 4
+            },
+            "return_values": {
+                "prereqs": [
+                    "functions"
+                ],
+                "complexity": 3
+            }
+        },
+        "data_structures": {
+            "lists": {
+                "prereqs": [
+                    "for_loops"
+                ],
+                "complexity": 3
+            },
+            "tuples": {
+                "prereqs": [
+                    "lists"
+                ],
+                "complexity": 3
+            },
+            "dictionaries": {
+                "prereqs": [
+                    "lists"
+                ],
+                "complexity": 4
+            },
+            "sets": {
+                "prereqs": [
+                    "lists"
+                ],
+                "complexity": 4
+            },
+            "list_comprehension": {
+                "prereqs": [
+                    "for_loops",
+                    "lists"
+                ],
+                "complexity": 5
+            },
+            "dict_comprehension": {
+                "prereqs": [
+                    "list_comprehension",
+                    "dictionaries"
+                ],
+                "complexity": 5
+            }
+        },
+        "advanced_functions": {
+            "lambda": {
+                "prereqs": [
+                    "functions"
+                ],
+                "complexity": 5
+            },
+            "higher_order_functions": {
+                "prereqs": [
+                    "functions",
+                    "lambda"
+                ],
+                "complexity": 6
+            },
+            "decorators": {
+                "prereqs": [
+                    "functions",
+                    "higher_order_functions"
+                ],
+                "complexity": 7
+            },
+            "generators": {
+                "prereqs": [
+                    "functions",
+                    "for_loops"
+                ],
+                "complexity": 6
+            },
+            "closures": {
+                "prereqs": [
+                    "functions",
+                    "scope"
+                ],
+                "complexity": 6
+            }
+        },
+        "oop": {
+            "classes": {
+                "prereqs": [
+                    "functions",
+                    "dictionaries"
+                ],
+                "complexity": 6
+            },
+            "inheritance": {
+                "prereqs": [
+                    "classes"
+                ],
+                "complexity": 7
+            },
+            "polymorphism": {
+                "prereqs": [
+                    "inheritance"
+                ],
+                "complexity": 7
+            },
+            "encapsulation": {
+                "prereqs": [
+                    "classes"
+                ],
+                "complexity": 6
+            },
+            "magic_methods": {
+                "prereqs": [
+                    "classes"
+                ],
+                "complexity": 7
+            },
+            "property_decorators": {
+                "prereqs": [
+                    "classes",
+                    "decorators"
+                ],
+                "complexity": 7
+            }
+        },
+        "advanced_concepts": {
+            "recursion": {
+                "prereqs": [
+                    "functions",
+                    "conditionals"
+                ],
+                "complexity": 7
+            },
+            "stack_memory": {
+                "prereqs": [
+                    "recursion"
+                ],
+                "complexity": 6
+            },
+            "exception_handling": {
+                "prereqs": [
+                    "functions"
+                ],
+                "complexity": 5
+            },
+            "context_managers": {
+                "prereqs": [
+                    "classes",
+                    "exception_handling"
+                ],
+                "complexity": 7
+            },
+            "iterators": {
+                "prereqs": [
+                    "for_loops",
+                    "classes"
+                ],
+                "complexity": 6
+            },
+            "async_await": {
+                "prereqs": [
+                    "functions",
+                    "generators"
+                ],
+                "complexity": 8
+            },
+            "threading": {
+                "prereqs": [
+                    "functions"
+                ],
+                "complexity": 8
+            },
+            "multiprocessing": {
+                "prereqs": [
+                    "threading"
+                ],
+                "complexity": 8
+            }
+        },
+        "modules_packages": {
+            "imports": {
+                "prereqs": [
+                    "functions"
+                ],
+                "complexity": 3
+            },
+            "modules": {
+                "prereqs": [
+                    "imports"
+                ],
+                "complexity": 4
+            },
+            "packages": {
+                "prereqs": [
+                    "modules"
+                ],
+                "complexity": 5
+            },
+            "virtual_environments": {
+                "prereqs": [
+                    "packages"
+                ],
+                "complexity": 4
+            }
+        },
+        "file_io": {
+            "file_reading": {
+                "prereqs": [
+                    "functions"
+                ],
+                "complexity": 4
+            },
+            "file_writing": {
+                "prereqs": [
+                    "file_reading"
+                ],
+                "complexity": 4
+            },
+            "context_managers_files": {
+                "prereqs": [
+                    "file_reading",
+                    "exception_handling"
+                ],
+                "complexity": 5
+            },
+            "json_handling": {
+                "prereqs": [
+                    "dictionaries",
+                    "file_reading"
+                ],
+                "complexity": 5
+            },
+            "csv_handling": {
+                "prereqs": [
+                    "lists",
+                    "file_reading"
+                ],
+                "complexity": 5
+            }
+        }
+    },
+    "javascript": {
+        "fundamentals": {
+            "variables_let_const": {
+                "prereqs": [],
+                "complexity": 2
+            },
+            "data_types": {
+                "prereqs": [
+                    "variables_let_const"
+                ],
+                "complexity": 2
+            },
+            "conditionals": {
+                "prereqs": [
+                    "variables_let_const"
+                ],
+                "complexity": 2
+            },
+            "loops": {
+                "prereqs": [
+                    "conditionals"
+                ],
+                "complexity": 3
+            },
+            "functions": {
+                "prereqs": [
+                    "conditionals"
+                ],
+                "complexity": 4
+            },
+            "arrow_functions": {
+                "prereqs": [
+                    "functions"
+                ],
+                "complexity": 4
+            },
+            "scope_hoisting": {
+                "prereqs": [
+                    "functions"
+                ],
+                "complexity": 5
+            }
+        },
+        "data_structures": {
+            "arrays": {
+                "prereqs": [
+                    "loops"
+                ],
+                "complexity": 3
+            },
+            "objects": {
+                "prereqs": [
+                    "variables_let_const"
+                ],
+                "complexity": 3
+            },
+            "array_methods": {
+                "prereqs": [
+                    "arrays",
+                    "functions"
+                ],
+                "complexity": 5
+            },
+            "map_filter_reduce": {
+                "prereqs": [
+                    "array_methods",
+                    "arrow_functions"
+                ],
+                "complexity": 6
+            },
+            "destructuring": {
+                "prereqs": [
+                    "arrays",
+                    "objects"
+                ],
+                "complexity": 5
+            },
+            "spread_operator": {
+                "prereqs": [
+                    "arrays",
+                    "objects"
+                ],
+                "complexity": 5
+            }
+        },
+        "async": {
+            "callbacks": {
+                "prereqs": [
+                    "functions"
+                ],
+                "complexity": 5
+            },
+            "promises": {
+                "prereqs": [
+                    "callbacks"
+                ],
+                "complexity": 6
+            },
+            "async_await": {
+                "prereqs": [
+                    "promises"
+                ],
+                "complexity": 6
+            },
+            "fetch_api": {
+                "prereqs": [
+                    "promises"
+                ],
+                "complexity": 6
+            }
+        },
+        "dom": {
+            "dom_selection": {
+                "prereqs": [
+                    "functions"
+                ],
+                "complexity": 4
+            },
+            "dom_manipulation": {
+                "prereqs": [
+                    "dom_selection"
+                ],
+                "complexity": 5
+            },
+            "event_listeners": {
+                "prereqs": [
+                    "functions",
+                    "dom_selection"
+                ],
+                "complexity": 5
+            },
+            "event_delegation": {
+                "prereqs": [
+                    "event_listeners"
+                ],
+                "complexity": 6
+            }
+        },
+        "oop": {
+            "classes": {
+                "prereqs": [
+                    "functions",
+                    "objects"
+                ],
+                "complexity": 6
+            },
+            "inheritance": {
+                "prereqs": [
+                    "classes"
+                ],
+                "complexity": 7
+            },
+            "prototypes": {
+                "prereqs": [
+                    "functions",
+                    "objects"
+                ],
+                "complexity": 7
+            }
+        },
+        "modern_js": {
+            "modules_import_export": {
+                "prereqs": [
+                    "functions"
+                ],
+                "complexity": 5
+            },
+            "template_literals": {
+                "prereqs": [
+                    "variables_let_const"
+                ],
+                "complexity": 3
+            },
+            "optional_chaining": {
+                "prereqs": [
+                    "objects"
+                ],
+                "complexity": 4
+            },
+            "nullish_coalescing": {
+                "prereqs": [
+                    "variables_let_const"
+                ],
+                "complexity": 4
+            }
+        }
+    },
+    "csharp": {
+        "fundamentals": {
+            "variables": {
+                "prereqs": [],
+                "complexity": 2
+            },
+            "data_types": {
+                "prereqs": [
+                    "variables"
+                ],
+                "complexity": 2
+            },
+            "conditionals": {
+                "prereqs": [
+                    "variables"
+                ],
+                "complexity": 2
+            },
+            "loops": {
+                "prereqs": [
+                    "conditionals"
+                ],
+                "complexity": 3
+            },
+            "methods": {
+                "prereqs": [
+                    "conditionals"
+                ],
+                "complexity": 4
+            },
+            "parameters": {
+                "prereqs": [
+                    "methods"
+                ],
+                "complexity": 4
+            }
+        },
+        "oop": {
+            "classes": {
+                "prereqs": [
+                    "methods"
+                ],
+                "complexity": 6
+            },
+            "properties": {
+                "prereqs": [
+                    "classes"
+                ],
+                "complexity": 5
+            },
+            "constructors": {
+                "prereqs": [
+                    "classes"
+                ],
+                "complexity": 5
+            },
+            "inheritance": {
+                "prereqs": [
+                    "classes"
+                ],
+                "complexity": 7
+            },
+            "interfaces": {
+                "prereqs": [
+                    "classes"
+                ],
+                "complexity": 7
+            },
+            "polymorphism": {
+                "prereqs": [
+                    "inheritance"
+                ],
+                "complexity": 7
+            },
+            "encapsulation": {
+                "prereqs": [
+                    "properties"
+                ],
+                "complexity": 6
+            }
+        },
+        "collections": {
+            "arrays": {
+                "prereqs": [
+                    "loops"
+                ],
+                "complexity": 3
+            },
+            "lists": {
+                "prereqs": [
+                    "arrays"
+                ],
+                "complexity": 4
+            },
+            "dictionaries": {
+                "prereqs": [
+                    "lists"
+                ],
+                "complexity": 5
+            },
+            "linq": {
+                "prereqs": [
+                    "lists",
+                    "methods"
+                ],
+                "complexity": 7
+            }
+        },
+        "advanced": {
+            "generics": {
+                "prereqs": [
+                    "classes"
+                ],
+                "complexity": 7
+            },
+            "delegates": {
+                "prereqs": [
+                    "methods"
+                ],
+                "complexity": 7
+            },
+            "events": {
+                "prereqs": [
+                    "delegates"
+                ],
+                "complexity": 7
+            },
+            "async_await": {
+                "prereqs": [
+                    "methods"
+                ],
+                "complexity": 8
+            },
+            "exception_handling": {
+                "prereqs": [
+                    "methods"
+                ],
+                "complexity": 5
+            }
+        }
+    }
+}

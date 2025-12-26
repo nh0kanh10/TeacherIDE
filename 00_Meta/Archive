@@ -1,0 +1,280 @@
+# v3.0 Roadmap - Cognitive Teaching System
+
+**Vision:** Transform workspace into a career-optimized learning system with intelligent knowledge tracing, personalized analogies, and skill ROI guidance.
+
+**Key Principles:**
+- 🎯 **ROI-Driven**: Prioritize skills by market value
+- 🧠 **Intelligent Tracing**: Auto-detect knowledge gaps (BKT)
+- 🔗 **Cross-Domain Transfer**: SMT-based analogies
+- 🔒 **Privacy-First**: No keystroke logging, all local
+
+---
+
+## Core Features (v2.2 → v3.0)
+
+### 1. User Profile & Background Context ✨ NEW
+**Problem:** System doesn't know user's background → generic explanations  
+**Solution:** Interactive profile builder
+
+**Features:**
+- Career goals (backend dev, high salary, etc.)
+- Background domains (chef, musician, teacher)
+- Learning preferences
+- Current skill level assessment
+
+**Files:**
+- `Scripts/profile_builder.py` - CLI questionnaire
+- `.ai_coach/user_profile.json` - Profile data
+
+---
+
+### 2. Skill ROI Calculator ✨ NEW
+**Problem:** Students waste time on low-value skills  
+**Solution:** Real-time ROI analysis from market data
+
+**Data Sources:**
+- Stack Overflow Developer Survey (salary data)
+- O*NET Database (job trends)
+- GitHub API (popularity)
+
+**Formula:**
+```
+ROI(skill) = (Market_Value × Demand_Trend) / Learning_Cost
+```
+
+**Display:** Code Lens annotations in IDE
+
+**Files:**
+- `Scripts/skill_roi_calculator.py` - Core logic
+- `Scripts/market_intelligence.py` - Data fetchers
+- DB: `skill_roi` table
+
+---
+
+### 3. Knowledge Tracing with pyBKT ✨ NEW
+**Problem:** System doesn't track what user actually knows  
+**Solution:** Bayesian Knowledge Tracing
+
+**Approach:**
+- Build skill dependency DAG (Python, JS, C#)
+- Track mastery probability per skill
+- Auto-backtrack when user struggles
+
+**Example:**
+```python
+User fails at "Recursion" 3 times
+→ Check prereqs: Functions (✓ 0.9), Stack Memory (✗ 0.3)
+→ Teach Stack Memory first (recursive teaching)
+```
+
+**Files:**
+- `Scripts/knowledge_tracer.py` - BKT engine
+- `Scripts/skill_graph.json` - Dependency graph
+- DB: `skill_mastery`, `skill_dependencies` tables
+
+---
+
+### 4. Analogy Engine (ConceptNet + SMT) ✨ NEW
+**Problem:** Generic explanations don't resonate  
+**Solution:** Structure Mapping Theory analogies
+
+**Process:**
+1. Get user background from profile ("Chef")
+2. Query ConceptNet for target concept ("Function")
+3. Find structural match in source domain
+4. Generate SMT-based explanation
+
+**Example:**
+```
+Target: "Function" in programming
+User: Chef
+Analogy: "Function is like a Recipe"
+- Write once (define) → use many times (call)
+- Ingredients = Parameters
+- Dish = Return value
+```
+
+**Files:**
+- `Scripts/analogy_generator.py` - Core engine
+- ConceptNet API integration
+- Fallback templates
+
+---
+
+## Implementation Phases
+
+### Phase 1: Foundation (v2.2) - Week 1-2 ✅ COMPLETE
+
+**Goals:**
+- User profiling system
+- Basic ROI calculator
+- DB schema v3
+
+**Tasks:**
+- [x] Create v3.0 roadmap
+- [x] Implement `profile_builder.py`
+- [x] Implement `skill_roi_calculator.py`
+- [x] Create migration v3 SQL
+- [x] Update requirements.txt (pyBKT, requests)
+- [x] Test profile + ROI flow
+- [x] Integrate with ai_teach.py
+
+**Deliverable:** ✅ v2.2 with Profile + ROI complete!
+
+---
+
+### Phase 2: Knowledge Intelligence (v2.3) - Week 3-5 ✅ COMPLETE
+
+**Goals:**
+- pyBKT integration
+- Skill dependency graph
+- Recursive teaching logic
+
+**Tasks:**
+- [x] Build skill graph for Python (58 skills!) ✨
+- [x] Build skill graphs for JS (30+) and C# (25+) ✨
+- [x] Integrate pyBKT model with fallback
+- [x] Connect to error_listener (track skill attempts)
+- [x] Implement backtracking algorithm (recursive teaching)
+- [x] Auto-populate dependencies on init
+- [x] CLI commands (check, update, recommend)
+- [x] Test recursive teaching
+
+**Deliverable:** ✅ v2.3 with full BKT engine + 115+ skill dependencies!
+
+---
+
+### Phase 3: Analogy System (v2.4) - Week 6-8 ✅ COMPLETE
+
+**Goals:**
+- ConceptNet integration
+- SMT template engine
+- Context-aware explanations
+
+**Tasks:**
+- [x] ConceptNet API wrapper (keyword extraction)
+- [x] SMT prompt generator for AI Agent integration
+- [x] Profile-based analogy selection (user background)
+- [x] Fallback explanation system (templates per domain)
+- [x] Analogy caching with quality scores
+- [x] ai_agent_integration.py for LLM workflow
+- [x] Test across domains (chef, musician, general)
+
+**Deliverable:** ✅ v2.4 with personalized SMT analogies!
+
+---
+
+### Phase 4: Integration & Polish (v3.0) - Week 9-12 ✅ COMPLETE
+
+**Goals:**
+- Unified experience
+- Performance optimization
+- Documentation
+
+**Tasks:**
+- [x] Connect ROI to ai_teach.py commands
+- [x] Integrate BKT with teaching_helper
+- [x] Add analogy to ai_teach.py
+- [x] Real market data APIs (Stack Overflow, O*NET)
+- [x] Update teaching_helper.py v3 (skill tracking, ROI logging)
+- [x] Migration v3 + auto-populate
+- [x] Update all docs to v3.0
+- [x] End-to-end testing
+- [x] Gap analysis + completion report
+
+**Deliverable:** ✅ v3.0 PRODUCTION RELEASE - 100% COMPLETE!
+
+---
+
+## Database Schema v3
+
+```sql
+-- User profile
+CREATE TABLE user_profile (
+    id INTEGER PRIMARY KEY,
+    background TEXT,  -- JSON: ["chef", "musician"]
+    career_goals TEXT,  -- JSON: ["backend_dev", "high_salary"]
+    learning_style TEXT,  -- "visual", "hands-on", etc.
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+-- Skill ROI data
+CREATE TABLE skill_roi (
+    skill_name TEXT PRIMARY KEY,
+    market_salary REAL,  -- Median from Stack Overflow
+    demand_trend REAL,  -- Growth rate from O*NET
+    learning_cost REAL,  -- Estimated hours × complexity
+    roi_score REAL,  -- Calculated
+    last_updated TIMESTAMP
+);
+
+-- Knowledge tracing (BKT)
+CREATE TABLE skill_mastery (
+    user_id INTEGER,
+    skill_name TEXT,
+    mastery_prob REAL,  -- 0.0 to 1.0 from BKT
+    attempts INTEGER,  -- Number of practice attempts
+    correct INTEGER,  -- Successful attempts
+    last_practiced TIMESTAMP,
+    PRIMARY KEY (user_id, skill_name)
+);
+
+-- Skill prerequisites
+CREATE TABLE skill_dependencies (
+    skill_name TEXT,
+    requires_skill TEXT,
+    strength REAL,  -- How critical is prereq (0.0-1.0)
+    PRIMARY KEY (skill_name, requires_skill)
+);
+
+-- Analogy cache
+CREATE TABLE analogies (
+    target_concept TEXT,
+    source_domain TEXT,  -- "cooking", "music"
+    analogy_text TEXT,
+    quality_score REAL,  -- User feedback
+    created_at TIMESTAMP,
+    PRIMARY KEY (target_concept, source_domain)
+);
+```
+
+---
+
+## Tech Stack Updates
+
+**New Dependencies:**
+```
+pyBKT>=1.4.0           # Bayesian Knowledge Tracing
+requests>=2.31.0       # API calls (ConceptNet, Stack Overflow)
+radon>=6.0.1           # Complexity analysis
+networkx>=3.0          # Skill dependency graph
+```
+
+---
+
+## Success Metrics
+
+**v2.2 Success:**
+- ✅ User profile completion rate > 80%
+- ✅ ROI calculator returns data for top 50 skills
+- ✅ Profile influences at least 1 teaching decision
+
+**v3.0 Success:**
+- ✅ BKT accuracy > 75% (predict user struggles)
+- ✅ Analogy relevance rating > 4/5 from users
+- ✅ Users report "understands my background"
+- ✅ Skill ROI influences learning path choices
+
+---
+
+## Next Steps
+
+1. **Immediate:** Start Phase 1 implementation
+2. **Week 1:** Complete profile_builder + skill_roi_calculator
+3. **Week 2:** Test v2.2, update docs
+4. **Week 3:** Start Phase 2 (BKT)
+
+---
+
+**This roadmap transforms the workspace from "knowledge storage" to "intelligent career coach"** 🚀

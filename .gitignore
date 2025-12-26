@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# Personal Data (CRITICAL - DO NOT COMMIT)
+.ai_coach/progress.db
+.ai_coach/progress.db-wal
+.ai_coach/progress.db-shm
+.ai_coach/config.json
+.ai_coach/user_profile.json
+05_Extracted_Knowledge/
+*.db
+*.db-wal
+*.db-shm
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+.cache/
+
+# Artifacts (brain folder - personal)
+.gemini/
+
+# Browser recordings
+*.webp
+artifacts/
